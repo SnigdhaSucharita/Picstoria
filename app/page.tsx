@@ -51,15 +51,15 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-              <span className="block mb-2">Your Photos,</span>
+              <span className="block mb-2">Discover & Curate</span>
               <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
-                Intelligently Organized
+                Your Perfect Photos
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Experience the future of photo management with AI-powered semantic search.
-              Find any moment in your collection using natural language.
+              Search millions of photos with AI-powered semantic search.
+              Find, save, and organize stunning images into beautiful collections.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
@@ -124,10 +124,10 @@ export default function HomePage() {
         <div className="container max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Powerful Features for Photo Management
+              Powerful Features for Photo Curation
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to organize, search, and enjoy your photo collection
+              Everything you need to discover, save, and organize stunning photos
             </p>
           </div>
 
@@ -138,7 +138,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">AI-Powered Search</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Find photos using natural language descriptions. Our advanced AI understands context, objects, scenes, and emotions in your images.
+                Search millions of photos using natural language. Our AI understands context, objects, scenes, and emotions to find exactly what you need.
               </p>
             </div>
 
@@ -146,9 +146,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Layers className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Beautiful Collections</h3>
+              <h3 className="text-2xl font-bold mb-4">Save to Collections</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Organize photos in stunning masonry layouts with intelligent sorting. Create collections that tell your story beautifully.
+                Save your favorite photos to personalized collections. Organize them in stunning masonry layouts that showcase your curated taste.
               </p>
             </div>
 
@@ -156,9 +156,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Palette className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Smart Color Extraction</h3>
+              <h3 className="text-2xl font-bold mb-4">Color Palettes</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Automatic color palette generation from your images. Search by color, create mood-based collections, and discover visual harmony.
+                View automatic color palettes extracted from photos. Discover images by their dominant colors and create mood-based collections.
               </p>
             </div>
 
@@ -166,9 +166,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Tag className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Auto-Tagging</h3>
+              <h3 className="text-2xl font-bold mb-4">Smart Tags</h3>
               <p className="text-muted-foreground leading-relaxed">
-                AI automatically suggests relevant tags for your photos. Add custom tags for better organization and faster discovery.
+                Browse photos by AI-generated tags. Filter by themes, objects, and scenes to discover exactly what you&apos;re looking for.
               </p>
             </div>
 
@@ -176,9 +176,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Zap className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Lightning Fast</h3>
+              <h3 className="text-2xl font-bold mb-4">Search History</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Search through thousands of photos in milliseconds. Optimized indexing ensures instant results every time.
+                Keep track of all your searches. Revisit past queries and rediscover photos you loved with your complete search history.
               </p>
             </div>
 
@@ -186,9 +186,9 @@ export default function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <ImageIcon className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Secure Storage</h3>
+              <h3 className="text-2xl font-bold mb-4">Personal Curation</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Your photos are safely stored with enterprise-grade security. Access them from anywhere, on any device.
+                Build your personal photo library from millions of images. Your collections are private and accessible from any device.
               </p>
             </div>
           </div>
@@ -198,10 +198,10 @@ export default function HomePage() {
       <section className="py-24 px-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
         <div className="container max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Transform Your Photo Library?
+            Ready to Start Curating?
           </h2>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of users who are already experiencing the future of photo management
+            Join thousands of users discovering and saving beautiful photos every day
           </p>
           <Link href="/signup">
             <Button size="lg" className="text-lg px-10 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
