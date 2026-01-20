@@ -205,7 +205,7 @@ export default function HomePage() {
           </p>
           <Link href="/signup">
             <Button size="lg" className="text-lg px-10 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
-              Start Your Free Trial
+              Start Curating Now
               <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
           </Link>

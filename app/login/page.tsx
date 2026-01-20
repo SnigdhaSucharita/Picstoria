@@ -23,6 +23,8 @@ export default function LoginPage() {
     try {
       const response = await authService.login(email, password);
       if (response.success) {
+        localStorage.setItem("token", "authenticated");
+        window.dispatchEvent(new Event("storage"));
         toast({
           title: "Login successful",
           description: "Welcome back!",

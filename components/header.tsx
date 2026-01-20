@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Logo } from "@/components/logo";
@@ -12,11 +13,27 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/signup") || pathname?.startsWith("/forgot-password") || pathname?.startsWith("/reset-password");
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsAuthenticated(!!token);
+    };
+
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+    };
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
       await authService.logout();
+      setIsAuthenticated(false);
       toast({
         title: "Logged out successfully",
       });
@@ -38,7 +55,7 @@ export function Header() {
         </Link>
 
         <nav className="flex items-center space-x-4">
-          {!isAuthPage && (
+          {isAuthenticated && !isAuthPage && (
             <>
               <Link href="/collection">
                 <Button variant="ghost">Collection</Button>

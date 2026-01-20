@@ -25,6 +25,8 @@ export const authService = {
 
   async logout(): Promise<void> {
     await apiClient.post('/api/auth/logout', {});
+    localStorage.removeItem("token");
+    window.dispatchEvent(new Event("storage"));
   },
 
   async forgotPassword(email: string): Promise<AuthResponse> {
