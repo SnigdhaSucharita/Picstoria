@@ -10,10 +10,7 @@ interface ImageCardProps {
 }
 
 export function ImageCard({ photo, onClick }: ImageCardProps) {
-  const allTags = [
-    ...(photo.aiGeneratedTags || []),
-    ...(photo.customTags || []),
-  ];
+  const allTags = [...(photo.suggestedTags || []), ...(photo.customTags || [])];
 
   return (
     <motion.div
