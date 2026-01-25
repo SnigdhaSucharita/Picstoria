@@ -22,7 +22,7 @@ export default function HistoryPage() {
   const loadHistory = async () => {
     try {
       const data = await apiClient.get<{ history: SearchHistoryItem[] }>(
-        "/api/search-history"
+        "/api/search-history",
       );
       setHistory(data.history || []);
     } catch (error: any) {
@@ -46,11 +46,18 @@ export default function HistoryPage() {
     const diff = now.getTime() - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
+    const minutes = Math.floor(diff / (1000 * 60));
+
+    if (diff < 0) {
+      return "Just now";
+    }
 
     if (days > 0) {
       return `${days} day${days !== 1 ? "s" : ""} ago`;
     } else if (hours > 0) {
       return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+    } else if (minutes > 0) {
+      return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
     } else {
       return "Just now";
     }
@@ -63,9 +70,7 @@ export default function HistoryPage() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold">Search History</h1>
-          <p className="text-muted-foreground mt-2">
-            Your recent searches
-          </p>
+          <p className="text-muted-foreground mt-2">Your recent searches</p>
         </div>
 
         {loading ? (
@@ -91,7 +96,7 @@ export default function HistoryPage() {
                   <div className="flex-1">
                     <p className="font-medium">{item.query}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {formatDate(item.createdAt)}
+                      {formatDate(item.timestamp)}
                     </p>
                   </div>
                   <Button

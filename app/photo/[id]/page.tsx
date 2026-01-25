@@ -52,15 +52,15 @@ export default function PhotoDetailPage() {
     try {
       const csrfToken = await apiClient.getCsrfToken();
       await apiClient.post(
-        `/api/photos/${photo.id}/tags`,
+        `/api/photos/${photo.id}/tag`,
         { tag: tag.trim(), type: isAiTag ? "ai" : "custom" },
-        csrfToken
+        csrfToken,
       );
 
       setPhoto({
         ...photo,
-        [isAiTag ? "aiGeneratedTags" : "customTags"]: [
-          ...(isAiTag ? photo.aiGeneratedTags || [] : photo.customTags || []),
+        [isAiTag ? "suggestedTags" : "customTags"]: [
+          ...(isAiTag ? photo.suggestedTags || [] : photo.customTags || []),
           tag.trim(),
         ],
       });
@@ -84,10 +84,18 @@ export default function PhotoDetailPage() {
   const handleRemoveTag = async (tag: string, isAiTag: boolean) => {
     if (!photo) return;
 
+    const csrfToken = await apiClient.getCsrfToken();
+    await apiClient.delete(
+      `/api/photos/${photo.id}/tag`,
+      { tag: tag.trim() },
+      csrfToken,
+    );
+
     const updatedPhoto = {
       ...photo,
-      [isAiTag ? "aiGeneratedTags" : "customTags"]: (
-        isAiTag ? photo.aiGeneratedTags : photo.customTags
+      [isAiTag ? "suggestedTags" : "customTags"]: (isAiTag
+        ? photo.suggestedTags
+        : photo.customTags
       )?.filter((t) => t !== tag),
     };
     setPhoto(updatedPhoto);
@@ -97,13 +105,17 @@ export default function PhotoDetailPage() {
     });
   };
 
-  const handleSaveRecommendation = async (imageUrl: string) => {
+  const handleSaveRecommendation = async (
+    imageUrl: string,
+    description: string,
+    altDescription: string,
+  ) => {
     try {
       const csrfToken = await apiClient.getCsrfToken();
       await apiClient.post(
         "/api/photos",
-        { imageUrl },
-        csrfToken
+        { imageUrl, description, altDescription },
+        csrfToken,
       );
 
       toast({
@@ -146,11 +158,7 @@ export default function PhotoDetailPage() {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
@@ -172,15 +180,17 @@ export default function PhotoDetailPage() {
               {photo.colorPalette && photo.colorPalette.length > 0 ? (
                 <ColorPalette colors={photo.colorPalette} />
               ) : (
-                <p className="text-muted-foreground">No color palette available</p>
+                <p className="text-muted-foreground">
+                  No color palette available
+                </p>
               )}
             </div>
 
             <div>
               <h2 className="text-2xl font-bold mb-4">AI Suggested Tags</h2>
               <div className="flex flex-wrap gap-2">
-                {photo.aiGeneratedTags && photo.aiGeneratedTags.length > 0 ? (
-                  photo.aiGeneratedTags.map((tag, idx) => (
+                {photo.suggestedTags && photo.suggestedTags.length > 0 ? (
+                  photo.suggestedTags.map((tag, idx) => (
                     <span
                       key={idx}
                       className="group px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center gap-1"
@@ -219,7 +229,9 @@ export default function PhotoDetailPage() {
                     </span>
                   ))
                 ) : (
-                  <p className="text-muted-foreground text-sm">No custom tags yet</p>
+                  <p className="text-muted-foreground text-sm">
+                    No custom tags yet
+                  </p>
                 )}
               </div>
 
@@ -263,7 +275,13 @@ export default function PhotoDetailPage() {
                     />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <Button
-                        onClick={() => handleSaveRecommendation(rec.imageUrl)}
+                        onClick={() =>
+                          handleSaveRecommendation(
+                            rec.imageUrl,
+                            rec.description,
+                            rec.altDescription,
+                          )
+                        }
                         size="sm"
                       >
                         <Plus className="h-4 w-4 mr-2" />

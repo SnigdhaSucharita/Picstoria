@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { GoogleAuthButton } from "@/components/google-auth-button";
+import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,6 +18,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  const searchParams = useSearchParams();
+  const verifyStatus = searchParams.get("verify");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +37,18 @@ export default function LoginPage() {
         });
         router.push("/collection");
       } else {
-        toast({
-          title: "Login failed",
-          description: response.message || "Invalid credentials",
-          variant: "destructive",
-        });
+        if (response.message?.toLowerCase().includes("verify")) {
+          toast({
+            title: "Email not verified",
+            description: "📧 Please verify your email before logging in.",
+          });
+        } else {
+          toast({
+            title: "Login failed",
+            description: response.message || "Invalid credentials",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error: any) {
       toast({
@@ -53,8 +66,26 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-lg">
         <div className="text-center">
           <h1 className="text-3xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Login to your Picstoria account</p>
+          <p className="text-muted-foreground mt-2">
+            Login to your Picstoria account
+          </p>
         </div>
+
+        {verifyStatus === "pending" && (
+          <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800">
+            📧 Please verify your email before logging in.
+          </div>
+        )}
+
+        {searchParams.get("auth") === "required" && (
+          <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+            🔒 Please login to access this page
+          </div>
+        )}
+
+        <GoogleAuthButton text="Continue with Google" />
+
+        <Divider />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -87,7 +118,10 @@ export default function LoginPage() {
         </form>
 
         <div className="text-center space-y-2">
-          <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-foreground">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
             Forgot password?
           </Link>
           <p className="text-sm text-muted-foreground">

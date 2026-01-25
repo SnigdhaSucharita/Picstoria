@@ -29,11 +29,11 @@ export default function CollectionPage() {
     } else {
       const filtered = photos.filter((photo) => {
         const allTags = [
-          ...(photo.aiGeneratedTags || []),
+          ...(photo.suggestedTags || []),
           ...(photo.customTags || []),
         ];
         return allTags.some((tag) =>
-          tag.toLowerCase().includes(searchTag.toLowerCase())
+          tag.toLowerCase().includes(searchTag.toLowerCase()),
         );
       });
       setFilteredPhotos(filtered);
@@ -69,7 +69,8 @@ export default function CollectionPage() {
           <div>
             <h1 className="text-4xl font-bold">My Collection</h1>
             <p className="text-muted-foreground mt-2">
-              {filteredPhotos.length} photo{filteredPhotos.length !== 1 ? "s" : ""}
+              {filteredPhotos.length} photo
+              {filteredPhotos.length !== 1 ? "s" : ""}
             </p>
           </div>
 
@@ -99,11 +100,16 @@ export default function CollectionPage() {
         ) : filteredPhotos.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-muted-foreground">
-              {searchTag ? "No photos match your filter" : "No photos yet. Start by searching and saving photos!"}
+              {searchTag
+                ? "No photos match your filter"
+                : "No photos yet. Start by searching and saving photos!"}
             </p>
           </div>
         ) : (
-          <MasonryGrid photos={filteredPhotos} onPhotoClick={handlePhotoClick} />
+          <MasonryGrid
+            photos={filteredPhotos}
+            onPhotoClick={handlePhotoClick}
+          />
         )}
       </main>
     </div>

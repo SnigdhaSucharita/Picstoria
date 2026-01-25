@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { GoogleAuthButton } from "@/components/google-auth-button";
+import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,10 +27,10 @@ export default function SignupPage() {
       const response = await authService.signup(username, email, password);
       if (response.success) {
         toast({
-          title: "Account created successfully",
-          description: "You can now login",
+          title: "Verify your email",
+          description: "We’ve sent a verification link to your email address.",
         });
-        router.push("/login");
+        router.push("/login?verify=pending");
       } else {
         toast({
           title: "Signup failed",
@@ -54,6 +56,10 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold">Create Account</h1>
           <p className="text-muted-foreground mt-2">Join Picstoria today</p>
         </div>
+
+        <GoogleAuthButton text="Continue with Google" />
+
+        <Divider />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
