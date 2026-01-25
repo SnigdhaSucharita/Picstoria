@@ -1,8 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -18,11 +16,19 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [verifyStatus, setVerifyStatus] = useState<string | null>(null);
+  const [auth, setAuth] = useState<string | null>(null);
+
   const router = useRouter();
   const { toast } = useToast();
 
-  const searchParams = useSearchParams();
-  const verifyStatus = searchParams.get("verify");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    setVerifyStatus(params.get("verify"));
+    setAuth(params.get("auth"));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +85,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        {searchParams.get("auth") === "required" && (
+        {auth === "required" && (
           <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
             🔒 Please login to access this page
           </div>
