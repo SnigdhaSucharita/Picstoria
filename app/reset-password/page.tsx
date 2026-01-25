@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { authService } from "@/lib/auth";
 
 function ResetPasswordForm() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,8 +21,12 @@ function ResetPasswordForm() {
 
   useEffect(() => {
     const tokenParam = searchParams?.get("token");
+    const emailParam = searchParams?.get("email");
     if (tokenParam) {
       setToken(tokenParam);
+    }
+    if (emailParam) {
+      setEmail(emailParam);
     }
   }, [searchParams]);
 
@@ -46,10 +51,19 @@ function ResetPasswordForm() {
       return;
     }
 
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Invalid or missing email",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await authService.resetPassword(token, password);
+      const response = await authService.resetPassword(token, email, password);
       if (response.success) {
         toast({
           title: "Password reset successfully",
@@ -126,16 +140,18 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20">
-        <div className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-lg">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">Reset Password</h1>
-            <p className="text-muted-foreground mt-2">Loading...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20">
+          <div className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-lg">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold">Reset Password</h1>
+              <p className="text-muted-foreground mt-2">Loading...</p>
+            </div>
           </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ResetPasswordForm />
     </Suspense>
   );
