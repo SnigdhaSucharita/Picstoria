@@ -2,7 +2,6 @@ export interface Photo {
   id: string;
   imageUrl: string;
   description?: string | null;
-  altDescription?: string | null;
   colorPalette?: string[] | null;
   suggestedTags?: string[] | null;
   customTags?: string[] | null;
@@ -12,7 +11,6 @@ export interface Photo {
 export interface SearchResult {
   imageUrl: string;
   description: string;
-  altDescription: string;
   score: number;
 }
 

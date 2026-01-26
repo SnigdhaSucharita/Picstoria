@@ -108,13 +108,12 @@ export default function PhotoDetailPage() {
   const handleSaveRecommendation = async (
     imageUrl: string,
     description: string,
-    altDescription: string,
   ) => {
     try {
       const csrfToken = await apiClient.getCsrfToken();
-      await apiClient.post(
+      const res = await apiClient.post<{ photo: { id: string } }>(
         "/api/photos",
-        { imageUrl, description, altDescription },
+        { imageUrl, description },
         csrfToken,
       );
 
@@ -122,6 +121,9 @@ export default function PhotoDetailPage() {
         title: "Photo saved",
         description: "Added to your collection",
       });
+
+      const photoId = res.photo.id;
+      router.push(`/photos/${photoId}`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -175,6 +177,15 @@ export default function PhotoDetailPage() {
           </div>
 
           <div className="space-y-6">
+            {photo.description && (
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Description</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  {photo.description}
+                </p>
+              </div>
+            )}
+
             <div>
               <h2 className="text-2xl font-bold mb-4">Color Palette</h2>
               {photo.colorPalette && photo.colorPalette.length > 0 ? (
@@ -279,7 +290,6 @@ export default function PhotoDetailPage() {
                           handleSaveRecommendation(
                             rec.imageUrl,
                             rec.description,
-                            rec.altDescription,
                           )
                         }
                         size="sm"

@@ -1,21 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/logo";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api-client";
 import { SearchResult } from "@/lib/types";
-import { Search, Sparkles, Image as ImageIcon, Tag, ArrowRight, Zap, Layers, Palette } from "lucide-react";
+import {
+  Search,
+  Sparkles,
+  Image as ImageIcon,
+  Tag,
+  Plus,
+  ArrowRight,
+  Zap,
+  Layers,
+  Palette,
+} from "lucide-react";
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +37,10 @@ export default function HomePage() {
 
     setLoading(true);
     try {
-      const data = await apiClient.get<{ results: SearchResult[] }>(
-        `/api/photos/search?query=${encodeURIComponent(query)}`
+      const data = await apiClient.get<{ result: SearchResult[] }>(
+        `/api/photos/search?query=${encodeURIComponent(query)}`,
       );
-      setResults(data.results || []);
+      setResults(data.result || []);
     } catch (error: any) {
       toast({
         title: "Search failed",
@@ -35,6 +49,34 @@ export default function HomePage() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSavePhoto = async (
+    imageUrl: string,
+    description?: string | null,
+  ) => {
+    try {
+      const csrfToken = await apiClient.getCsrfToken();
+      const res = await apiClient.post<{ photo: { id: string } }>(
+        "/api/photos",
+        { imageUrl, description },
+        csrfToken,
+      );
+
+      toast({
+        title: "Photo saved",
+        description: "Added to your collection",
+      });
+
+      const photoId = res.photo.id;
+      router.push(`/photos/${photoId}`);
+    } catch (error: any) {
+      toast({
+        title: "Save failed",
+        description: error.message || "Could not save photo",
+        variant: "destructive",
+      });
     }
   };
 
@@ -58,19 +100,26 @@ export default function HomePage() {
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Search millions of photos with AI-powered semantic search.
-              Find, save, and organize stunning images into beautiful collections.
+              Search millions of photos with AI-powered semantic search. Find,
+              save, and organize stunning images into beautiful collections.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
               <Link href="/signup">
-                <Button size="lg" className="text-lg px-8 h-14 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                <Button
+                  size="lg"
+                  className="text-lg px-8 h-14 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                >
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/login">
-                <Button size="lg" variant="outline" className="text-lg px-8 h-14 border-2">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-8 h-14 border-2"
+                >
                   Sign In
                 </Button>
               </Link>
@@ -81,7 +130,10 @@ export default function HomePage() {
                 <p className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">
                   Try it now
                 </p>
-                <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+                <form
+                  onSubmit={handleSearch}
+                  className="flex flex-col sm:flex-row gap-3"
+                >
                   <Input
                     type="text"
                     placeholder="Search for 'sunset over mountains' or 'family gathering'..."
@@ -89,7 +141,12 @@ export default function HomePage() {
                     onChange={(e) => setQuery(e.target.value)}
                     className="h-14 text-base border-2 flex-1"
                   />
-                  <Button type="submit" size="lg" disabled={loading} className="h-14 px-8">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={loading}
+                    className="h-14 px-8"
+                  >
                     <Search className="h-5 w-5 mr-2" />
                     {loading ? "Searching..." : "Search"}
                   </Button>
@@ -98,15 +155,39 @@ export default function HomePage() {
                 {results.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                     {results.map((result, idx) => (
-                      <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group shadow-lg">
+                      <div
+                        key={idx}
+                        className="relative aspect-square rounded-xl overflow-hidden group shadow-lg"
+                      >
                         <Image
                           src={result.imageUrl}
                           alt="Search result"
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
-                          <p className="text-white font-semibold">
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3">
+                          <div className="flex justify-end">
+                            {!isAuthenticated && (
+                              <Link href="/login">Login to save</Link>
+                            )}
+                            {isAuthenticated && (
+                              <Button
+                                size="icon"
+                                variant="secondary"
+                                onClick={() =>
+                                  handleSavePhoto(
+                                    result.imageUrl,
+                                    result.description,
+                                  )
+                                }
+                                className="rounded-full"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+
+                          <p className="text-white text-sm font-semibold">
                             Match: {(result.score * 100).toFixed(0)}%
                           </p>
                         </div>
@@ -127,7 +208,8 @@ export default function HomePage() {
               Powerful Features for Photo Curation
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to discover, save, and organize stunning photos
+              Everything you need to discover, save, and organize stunning
+              photos
             </p>
           </div>
 
@@ -138,7 +220,9 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">AI-Powered Search</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Search millions of photos using natural language. Our AI understands context, objects, scenes, and emotions to find exactly what you need.
+                Search millions of photos using natural language. Our AI
+                understands context, objects, scenes, and emotions to find
+                exactly what you need.
               </p>
             </div>
 
@@ -148,7 +232,9 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Save to Collections</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Save your favorite photos to personalized collections. Organize them in stunning masonry layouts that showcase your curated taste.
+                Save your favorite photos to personalized collections. Organize
+                them in stunning masonry layouts that showcase your curated
+                taste.
               </p>
             </div>
 
@@ -158,7 +244,9 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Color Palettes</h3>
               <p className="text-muted-foreground leading-relaxed">
-                View automatic color palettes extracted from photos. Discover images by their dominant colors and create mood-based collections.
+                View automatic color palettes extracted from photos. Discover
+                images by their dominant colors and create mood-based
+                collections.
               </p>
             </div>
 
@@ -168,7 +256,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Smart Tags</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Browse photos by AI-generated tags. Filter by themes, objects, and scenes to discover exactly what you&apos;re looking for.
+                Browse photos by AI-generated tags. Filter by themes, objects,
+                and scenes to discover exactly what you&apos;re looking for.
               </p>
             </div>
 
@@ -178,7 +267,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Search History</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Keep track of all your searches. Revisit past queries and rediscover photos you loved with your complete search history.
+                Keep track of all your searches. Revisit past queries and
+                rediscover photos you loved with your complete search history.
               </p>
             </div>
 
@@ -188,7 +278,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Personal Curation</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Build your personal photo library from millions of images. Your collections are private and accessible from any device.
+                Build your personal photo library from millions of images. Your
+                collections are private and accessible from any device.
               </p>
             </div>
           </div>
@@ -201,10 +292,14 @@ export default function HomePage() {
             Ready to Start Curating?
           </h2>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of users discovering and saving beautiful photos every day
+            Join thousands of users discovering and saving beautiful photos
+            every day
           </p>
           <Link href="/signup">
-            <Button size="lg" className="text-lg px-10 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+            <Button
+              size="lg"
+              className="text-lg px-10 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+            >
               Start Curating Now
               <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
