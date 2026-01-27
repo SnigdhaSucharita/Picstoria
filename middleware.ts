@@ -4,7 +4,9 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  console.log("MW PATH:", pathname);
+  if (pathname === "/") {
+    return NextResponse.next();
+  }
 
   // 1️⃣ Public routes
   const publicRoutes = [
@@ -21,6 +23,8 @@ export function middleware(request: NextRequest) {
 
   // 2️⃣ Read ACCESS token (matches backend)
   const accessToken = request.cookies.get("access")?.value;
+
+  console.log("[MIDDLEWARE]", "path =", pathname, "access =", !!accessToken);
 
   // 3️⃣ Block unauthenticated access
   if (!isPublicRoute && !accessToken) {

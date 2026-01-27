@@ -22,7 +22,7 @@ export function useAuth() {
       try {
         const data = await apiClient.get<{ user: AuthUser }>("/api/auth/me");
         if (mounted) setUser(data.user);
-      } catch {
+      } catch (err: any) {
         if (mounted) setUser(null);
       } finally {
         if (mounted) setLoading(false);

@@ -58,6 +58,11 @@ export default function HomePage() {
   };
 
   const handleSavePhoto = async (result: SearchResultUI) => {
+    if (!isAuthenticated) {
+      router.push("/login?auth=required");
+      return;
+    }
+
     if (result.isSaved || result.isSaving) return;
 
     setResults((prev) =>
