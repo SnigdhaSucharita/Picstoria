@@ -4,6 +4,8 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  console.log("MW PATH:", pathname);
+
   // 1️⃣ Public routes
   const publicRoutes = [
     "/",
