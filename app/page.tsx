@@ -44,6 +44,7 @@ export default function HomePage() {
     try {
       const data = await apiClient.get<{ result: SearchResult[] }>(
         `/api/photos/search?query=${encodeURIComponent(query)}`,
+        { skipRefresh: true },
       );
       setResults(data.result || []);
     } catch (error: any) {

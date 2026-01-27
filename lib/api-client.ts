@@ -1,3 +1,6 @@
+type RequestOptions = {
+  skipRefresh?: boolean;
+};
 class ApiClient {
   private refreshPromise: Promise<void> | null = null;
 
@@ -34,10 +37,11 @@ class ApiClient {
 
   private async requestWithRefresh<T>(
     requestFn: () => Promise<Response>,
+    options?: RequestOptions,
   ): Promise<T> {
     let response = await requestFn();
 
-    if (response.status !== 401) {
+    if (response.status !== 401 || options?.skipRefresh) {
       if (!response.ok) {
         const error = await response
           .json()
@@ -69,7 +73,7 @@ class ApiClient {
 
   /* ---------------- GET ---------------- */
 
-  async get<T>(path: string): Promise<T> {
+  async get<T>(path: string, options?: RequestOptions): Promise<T> {
     return this.requestWithRefresh<T>(() =>
       fetch(path, {
         credentials: "include",
@@ -82,7 +86,12 @@ class ApiClient {
 
   /* ---------------- POST ---------------- */
 
-  async post<T>(path: string, data: any, csrfToken?: string): Promise<T> {
+  async post<T>(
+    path: string,
+    data: any,
+    csrfToken?: string,
+    options?: RequestOptions,
+  ): Promise<T> {
     return this.requestWithRefresh<T>(() => {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -103,7 +112,12 @@ class ApiClient {
 
   /* ---------------- DELETE ---------------- */
 
-  async delete<T>(path: string, data: any, csrfToken: string): Promise<T> {
+  async delete<T>(
+    path: string,
+    data: any,
+    csrfToken: string,
+    options?: RequestOptions,
+  ): Promise<T> {
     return this.requestWithRefresh<T>(() =>
       fetch(path, {
         method: "DELETE",
