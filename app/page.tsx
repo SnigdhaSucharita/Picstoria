@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/logo";
+import { SearchResultCard } from "@/components/search-result-card";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api-client";
@@ -23,9 +24,14 @@ import {
   Palette,
 } from "lucide-react";
 
+type SearchResultUI = SearchResult & {
+  isSaved?: boolean;
+  isSaving?: boolean;
+};
+
 export default function HomePage() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<SearchResultUI[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
@@ -52,29 +58,44 @@ export default function HomePage() {
     }
   };
 
-  const handleSavePhoto = async (
-    imageUrl: string,
-    description?: string | null,
-  ) => {
+  const handleSavePhoto = async (result: SearchResultUI) => {
+    if (result.isSaved || result.isSaving) return;
+
+    setResults((prev) =>
+      prev.map((r) =>
+        r.imageUrl === result.imageUrl ? { ...r, isSaving: true } : r,
+      ),
+    );
+
     try {
       const csrfToken = await apiClient.getCsrfToken();
       const res = await apiClient.post<{ photo: { id: string } }>(
         "/api/photos",
-        { imageUrl, description },
+        {
+          imageUrl: result.imageUrl,
+          description: result.description,
+        },
         csrfToken,
       );
 
-      toast({
-        title: "Photo saved",
-        description: "Added to your collection",
-      });
+      setResults((prev) =>
+        prev.map((r) =>
+          r.imageUrl === result.imageUrl
+            ? { ...r, isSaving: false, isSaved: true }
+            : r,
+        ),
+      );
 
-      const photoId = res.photo.id;
-      router.push(`/photos/${photoId}`);
-    } catch (error: any) {
+      router.push(`/photos/${res.photo.id}`);
+    } catch {
+      setResults((prev) =>
+        prev.map((r) =>
+          r.imageUrl === result.imageUrl ? { ...r, isSaving: false } : r,
+        ),
+      );
+
       toast({
         title: "Save failed",
-        description: error.message || "Could not save photo",
         variant: "destructive",
       });
     }
@@ -152,49 +173,20 @@ export default function HomePage() {
                   </Button>
                 </form>
 
-                {results.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                    {results.map((result, idx) => (
-                      <div
-                        key={idx}
-                        className="relative aspect-square rounded-xl overflow-hidden group shadow-lg"
-                      >
-                        <Image
-                          src={result.imageUrl}
-                          alt="Search result"
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3">
-                          <div className="flex justify-end">
-                            {!isAuthenticated && (
-                              <Link href="/login">Login to save</Link>
-                            )}
-                            {isAuthenticated && (
-                              <Button
-                                size="icon"
-                                variant="secondary"
-                                onClick={() =>
-                                  handleSavePhoto(
-                                    result.imageUrl,
-                                    result.description,
-                                  )
-                                }
-                                className="rounded-full"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-
-                          <p className="text-white text-sm font-semibold">
-                            Match: {(result.score * 100).toFixed(0)}%
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                  {results.map((result) => (
+                    <SearchResultCard
+                      key={result.imageUrl}
+                      imageUrl={result.imageUrl}
+                      description={result.description}
+                      score={result.score}
+                      isAuthenticated={isAuthenticated}
+                      isSaved={!!result.isSaved}
+                      isSaving={!!result.isSaving}
+                      onSave={() => handleSavePhoto(result)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
