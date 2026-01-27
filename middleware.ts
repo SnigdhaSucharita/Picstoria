@@ -4,11 +4,12 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/") {
+  if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
 
   const publicRoutes = [
+    "/",
     "/login",
     "/signup",
     "/forgot-password",
@@ -22,12 +23,14 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access")?.value;
 
   if (!isPublicRoute && !accessToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("auth", "required");
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|api/public|_next|favicon.ico).*)"],
+  matcher: ["/:path*"],
 };
