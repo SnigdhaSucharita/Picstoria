@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,13 @@ export default function PhotoDetailPage() {
   const [recommendations, setRecommendations] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [customTag, setCustomTag] = useState("");
+  const { user, loadingg } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     if (params?.id) {

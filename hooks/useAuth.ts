@@ -13,7 +13,7 @@ export interface AuthUser {
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingg, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -37,7 +37,7 @@ export function useAuth() {
 
   return {
     user,
-    loading,
+    loadingg,
     isAuthenticated: !!user,
   };
 }

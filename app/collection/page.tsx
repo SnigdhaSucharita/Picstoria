@@ -10,14 +10,22 @@ import { useToast } from "@/components/ui/use-toast";
 import { apiClient } from "@/lib/api-client";
 import { Photo } from "@/lib/types";
 import { Search, Plus } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function CollectionPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTag, setSearchTag] = useState("");
+  const { user, loadingg } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     loadPhotos();

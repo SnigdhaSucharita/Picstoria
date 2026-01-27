@@ -51,8 +51,7 @@ class ApiClient {
     try {
       await this.refreshAccessToken();
     } catch {
-      window.location.href = "/login";
-      throw new Error("Session expired");
+      throw new Error("UNAUTHENTICATED");
     }
 
     // retry once
