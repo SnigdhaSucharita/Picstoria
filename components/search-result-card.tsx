@@ -37,7 +37,11 @@ export function SearchResultCard({
       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
         <div className="flex justify-end">
           {!isAuthenticated ? (
-            <Link href="/login" className="text-white text-sm underline">
+            <Link
+              href="/login"
+              prefetch={false}
+              className="text-white text-sm underline"
+            >
               Login to save
             </Link>
           ) : (
