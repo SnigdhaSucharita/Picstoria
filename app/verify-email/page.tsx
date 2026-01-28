@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -9,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 type Status = "loading" | "success" | "expired" | "invalid" | "error";
 
-export default function VerifyEmailPage() {
+function VerifyEmail() {
   const params = useSearchParams();
   const token = params.get("token");
   const email = params.get("email");
@@ -119,5 +121,13 @@ export default function VerifyEmailPage() {
         )}
       </motion.div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyEmail />
+    </Suspense>
   );
 }
