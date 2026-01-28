@@ -4,6 +4,17 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // NEVER touch Next internals
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/assets") ||
+    pathname.match(/\.(.*)$/)
+  ) {
+    return NextResponse.next();
+  }
+
+  // API routes are backend-only
   if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
@@ -33,5 +44,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/((?!_next|favicon.ico).*)"],
 };
