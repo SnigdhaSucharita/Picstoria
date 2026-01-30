@@ -8,25 +8,29 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
     {
       method: req.method,
       headers: {
-        "Content-Type": req.headers.get("content-type") || "application/json",
         cookie: req.headers.get("cookie") ?? "",
         "csrf-token": req.headers.get("csrf-token") ?? "",
+        accept: req.headers.get("accept") ?? "*/*",
+        "content-type": req.headers.get("content-type") ?? "",
       },
       body:
         req.method === "GET" || req.method === "HEAD"
           ? undefined
           : await req.text(),
-      redirect: "manual",
     },
   );
 
-  const res = new NextResponse(await backendRes.text(), {
+  const body = await backendRes.text();
+
+  const res = new NextResponse(body, {
     status: backendRes.status,
   });
 
   backendRes.headers.forEach((value, key) => {
     if (key.toLowerCase() === "set-cookie") {
       res.headers.append("set-cookie", value);
+    } else {
+      res.headers.set(key, value);
     }
   });
 
