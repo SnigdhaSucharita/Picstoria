@@ -28,3 +28,7 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
     if (key.toLowerCase() === "set-cookie") {
       res.headers.append("set-cookie", value);
     }
+  });
+
+  return res;
+}
