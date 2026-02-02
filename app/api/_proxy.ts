@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND = process.env.NEXT_PUBLIC_API_URL!;
+const FRONTEND = process.env.NEXT_PUBLIC_APP_URL!;
 
 export async function proxyRequest(req: NextRequest, backendPath: string) {
   const backendRes = await fetch(
@@ -10,7 +11,6 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
       headers: {
         cookie: req.headers.get("cookie") ?? "",
         "csrf-token": req.headers.get("csrf-token") ?? "",
-        accept: req.headers.get("accept") ?? "*/*",
         "content-type": req.headers.get("content-type") ?? "",
       },
       body:
@@ -27,12 +27,22 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
   });
 
   backendRes.headers.forEach((value, key) => {
-    if (key.toLowerCase() === "set-cookie") {
+    const lowerKey = key.toLowerCase();
+
+    if (lowerKey === "set-cookie") {
       res.headers.append("set-cookie", value);
-    } else {
-      res.headers.set(key, value);
+      return;
     }
+
+    if (lowerKey.startsWith("access-control-allow") || lowerKey === "vary") {
+      return;
+    }
+
+    res.headers.set(key, value);
   });
+
+  res.headers.set("Access-Control-Allow-Origin", FRONTEND);
+  res.headers.set("Access-Control-Allow-Credentials", "true");
 
   return res;
 }
