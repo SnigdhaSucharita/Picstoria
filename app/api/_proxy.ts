@@ -8,6 +8,7 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
     `${BACKEND}${backendPath}${req.nextUrl.search}`,
     {
       method: req.method,
+      credentials: "include",
       headers: {
         cookie: req.headers.get("cookie") ?? "",
         "csrf-token": req.headers.get("csrf-token") ?? "",
