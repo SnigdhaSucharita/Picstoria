@@ -29,6 +29,14 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
   backendRes.headers.forEach((value, key) => {
     const lowerKey = key.toLowerCase();
 
+    if (
+      lowerKey === "content-encoding" ||
+      lowerKey === "content-length" ||
+      lowerKey === "transfer-encoding"
+    ) {
+      return;
+    }
+
     if (lowerKey === "set-cookie") {
       res.headers.append("set-cookie", value);
       return;
