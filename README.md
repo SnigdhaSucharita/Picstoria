@@ -57,6 +57,7 @@ NEXT_PUBLIC_API_URL=https://cosmocode.onrender.com
 ```
 
 For local development:
+
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
@@ -99,7 +100,6 @@ CMD ["npm", "start"]
 - **Server-Side Rendering** - Fast initial page loads
 - **API Proxy** - Rewrites to backend via Next.js config
 - **Cookie-based Auth** - Secure JWT tokens in HTTP-only cookies
-- **CSRF Protection** - Token validation on all mutations
 - **Image Optimization** - Next.js Image component
 - **Code Splitting** - Automatic route-based splitting
 
@@ -115,6 +115,7 @@ CMD ["npm", "start"]
 ## Contributing
 
 This is a production-ready application. Ensure all changes maintain:
+
 - TypeScript type safety
 - Responsive design
 - Accessibility standards

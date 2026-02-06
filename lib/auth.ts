@@ -14,12 +14,7 @@ export interface AuthResponse {
 
 export const authService = {
   async login(email: string, password: string): Promise<AuthResponse> {
-    const csrfToken = await apiClient.getCsrfToken();
-    return apiClient.post<AuthResponse>(
-      "/api/auth/login",
-      { email, password },
-      csrfToken,
-    );
+    return apiClient.post<AuthResponse>("/api/auth/login", { email, password });
   },
 
   async signup(
@@ -27,12 +22,11 @@ export const authService = {
     email: string,
     password: string,
   ): Promise<AuthResponse> {
-    const csrfToken = await apiClient.getCsrfToken();
-    return apiClient.post<AuthResponse>(
-      "/api/auth/signup",
-      { username, email, password },
-      csrfToken,
-    );
+    return apiClient.post<AuthResponse>("/api/auth/signup", {
+      username,
+      email,
+      password,
+    });
   },
 
   async logout(): Promise<void> {
@@ -42,12 +36,7 @@ export const authService = {
   },
 
   async forgotPassword(email: string): Promise<AuthResponse> {
-    const csrfToken = await apiClient.getCsrfToken();
-    return apiClient.post<AuthResponse>(
-      "/api/auth/forgot-password",
-      { email },
-      csrfToken,
-    );
+    return apiClient.post<AuthResponse>("/api/auth/forgot-password", { email });
   },
 
   async resetPassword(
@@ -55,11 +44,10 @@ export const authService = {
     email: string,
     newPassword: string,
   ): Promise<AuthResponse> {
-    const csrfToken = await apiClient.getCsrfToken();
-    return apiClient.post<AuthResponse>(
-      "/api/auth/reset-password",
-      { token, email, newPassword },
-      csrfToken,
-    );
+    return apiClient.post<AuthResponse>("/api/auth/reset-password", {
+      token,
+      email,
+      newPassword,
+    });
   },
 };

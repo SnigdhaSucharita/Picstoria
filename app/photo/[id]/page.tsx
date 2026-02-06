@@ -58,12 +58,10 @@ export default function PhotoDetailPage() {
     if (!photo || !tag.trim()) return;
 
     try {
-      const csrfToken = await apiClient.getCsrfToken();
-      await apiClient.post(
-        `/api/photos/${photo.id}/tag`,
-        { tag: tag.trim(), type: isAiTag ? "ai" : "custom" },
-        csrfToken,
-      );
+      await apiClient.post(`/api/photos/${photo.id}/tag`, {
+        tag: tag.trim(),
+        type: isAiTag ? "ai" : "custom",
+      });
 
       setPhoto({
         ...photo,
@@ -92,12 +90,7 @@ export default function PhotoDetailPage() {
   const handleRemoveTag = async (tag: string, isAiTag: boolean) => {
     if (!photo) return;
 
-    const csrfToken = await apiClient.getCsrfToken();
-    await apiClient.delete(
-      `/api/photos/${photo.id}/tag`,
-      { tag: tag.trim() },
-      csrfToken,
-    );
+    await apiClient.delete(`/api/photos/${photo.id}/tag`, { tag: tag.trim() });
 
     const updatedPhoto = {
       ...photo,
@@ -118,11 +111,9 @@ export default function PhotoDetailPage() {
     description: string,
   ) => {
     try {
-      const csrfToken = await apiClient.getCsrfToken();
       const res = await apiClient.post<{ photo: { id: string } }>(
         "/api/photos",
         { imageUrl, description },
-        csrfToken,
       );
 
       toast({

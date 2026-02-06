@@ -73,14 +73,12 @@ export default function HomePage() {
     );
 
     try {
-      const csrfToken = await apiClient.getCsrfToken();
       const res = await apiClient.post<{ photo: { id: string } }>(
         "/api/photos",
         {
           imageUrl: result.imageUrl,
           description: result.description,
         },
-        csrfToken,
       );
 
       setResults((prev) =>

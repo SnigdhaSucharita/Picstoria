@@ -4,16 +4,6 @@ type RequestOptions = {
 class ApiClient {
   private refreshPromise: Promise<void> | null = null;
 
-  /* ---------------- CSRF ---------------- */
-
-  async getCsrfToken(): Promise<string> {
-    const response = await fetch("/api/auth/csrf", {
-      credentials: "include",
-    });
-    const data = await response.json();
-    return data.csrfToken;
-  }
-
   /* ---------------- REFRESH ---------------- */
 
   private async refreshAccessToken() {
@@ -86,20 +76,11 @@ class ApiClient {
 
   /* ---------------- POST ---------------- */
 
-  async post<T>(
-    path: string,
-    data: any,
-    csrfToken?: string,
-    options?: RequestOptions,
-  ): Promise<T> {
+  async post<T>(path: string, data: any, options?: RequestOptions): Promise<T> {
     return this.requestWithRefresh<T>(() => {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
-
-      if (csrfToken) {
-        headers["csrf-token"] = csrfToken;
-      }
 
       return fetch(path, {
         method: "POST",
@@ -115,7 +96,6 @@ class ApiClient {
   async delete<T>(
     path: string,
     data: any,
-    csrfToken: string,
     options?: RequestOptions,
   ): Promise<T> {
     return this.requestWithRefresh<T>(() =>
@@ -124,7 +104,6 @@ class ApiClient {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "csrf-token": csrfToken,
         },
       }),
     );
