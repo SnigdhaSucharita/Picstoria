@@ -10,7 +10,6 @@ export async function proxyRequest(req: NextRequest, backendPath: string) {
       method: req.method,
       credentials: "include",
       headers: {
-        cookie: req.headers.get("cookie") ?? "",
         "csrf-token": req.headers.get("csrf-token") ?? "",
         "content-type": req.headers.get("content-type") ?? "",
       },
