@@ -1,9 +1,5 @@
 import { apiClient } from "./api-client";
-import {
-  setAccessToken,
-  clearAccessToken,
-  getAccessToken,
-} from "./token-store";
+import { setAccessToken, clearAccessToken } from "./token-store";
 
 const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
@@ -34,8 +30,6 @@ export const authService = {
     );
 
     setAccessToken(res.accessToken);
-    console.log("Access token:", res.accessToken);
-    console.log("Stored token:", getAccessToken());
 
     return {
       success: true,
