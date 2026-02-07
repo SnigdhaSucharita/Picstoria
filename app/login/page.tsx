@@ -23,7 +23,6 @@ function LoginContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
-  const verifyStatus = searchParams.get("verify");
   const auth = searchParams.get("auth");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,12 +73,6 @@ function LoginContent() {
             Login to your Picstoria account
           </p>
         </div>
-
-        {verifyStatus === "pending" && (
-          <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800">
-            📧 Please verify your email before logging in.
-          </div>
-        )}
 
         {auth === "required" && (
           <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">

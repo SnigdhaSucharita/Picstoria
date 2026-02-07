@@ -20,6 +20,8 @@ function VerifyEmail() {
   const [resending, setResending] = useState(false);
   const [message, setMessage] = useState("");
 
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     if (!token || !email) {
       setStatus("invalid");
@@ -32,7 +34,7 @@ function VerifyEmail() {
     async function verify() {
       try {
         await apiClient.get(
-          `/api/auth/verify-email?token=${safeToken}&email=${encodeURIComponent(
+          `${BACKEND}/api/auth/verify-email?token=${safeToken}&email=${encodeURIComponent(
             safeEmail,
           )}`,
         );
@@ -55,7 +57,9 @@ function VerifyEmail() {
       setResending(true);
       setMessage("");
 
-      await apiClient.post("/api/auth/resend-verification", { email });
+      await apiClient.post(`${BACKEND}/api/auth/resend-verification`, {
+        email,
+      });
 
       setMessage("Verification email sent. Please check your inbox.");
     } catch {

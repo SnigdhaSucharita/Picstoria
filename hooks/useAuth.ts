@@ -14,13 +14,16 @@ export interface AuthUser {
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loadingg, setLoading] = useState(true);
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     let mounted = true;
 
     async function fetchMe() {
       try {
-        const data = await apiClient.get<{ user: AuthUser }>("/api/auth/me");
+        const data = await apiClient.get<{ user: AuthUser }>(
+          `${BACKEND}/api/auth/me`,
+        );
         if (mounted) setUser(data.user);
       } catch (err: any) {
         if (mounted) setUser(null);

@@ -32,7 +32,6 @@ export default function SignupPage() {
           title: "Verify your email",
           description: "We’ve sent a verification link to your email address.",
         });
-        router.push("/login?verify=pending");
       } else {
         toast({
           title: "Signup failed",

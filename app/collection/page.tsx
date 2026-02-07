@@ -20,6 +20,7 @@ export default function CollectionPage() {
   const { user, loadingg } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -50,7 +51,9 @@ export default function CollectionPage() {
 
   const loadPhotos = async () => {
     try {
-      const data = await apiClient.get<{ photos: Photo[] }>("/api/photos");
+      const data = await apiClient.get<{ photos: Photo[] }>(
+        `${BACKEND}/api/photos`,
+      );
       setPhotos(data.photos || []);
       setFilteredPhotos(data.photos || []);
     } catch (error: any) {
@@ -65,7 +68,7 @@ export default function CollectionPage() {
   };
 
   const handlePhotoClick = (photo: Photo) => {
-    router.push(`/photo/${photo.id}`);
+    router.push(`${BACKEND}/photo/${photo.id}`);
   };
 
   return (

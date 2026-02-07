@@ -1,9 +1,18 @@
 import { apiClient } from "./api-client";
+import { setAccessToken, clearAccessToken } from "./token-store";
+
+const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 export interface User {
   id: string;
   username: string;
   email: string;
+}
+
+interface LoginResponse {
+  accessToken: string;
+  message?: string;
+  user: User;
 }
 
 export interface AuthResponse {
@@ -14,7 +23,19 @@ export interface AuthResponse {
 
 export const authService = {
   async login(email: string, password: string): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/api/auth/login", { email, password });
+    const res = await apiClient.post<LoginResponse>(
+      `${BACKEND}/api/auth/login`,
+      { email, password },
+      { skipRefresh: true },
+    );
+
+    setAccessToken(res.accessToken);
+
+    return {
+      success: true,
+      message: res.message,
+      user: res.user,
+    };
   },
 
   async signup(
@@ -22,7 +43,7 @@ export const authService = {
     email: string,
     password: string,
   ): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/api/auth/signup", {
+    return apiClient.post<AuthResponse>(`${BACKEND}/api/auth/signup`, {
       username,
       email,
       password,
@@ -30,13 +51,20 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await apiClient.post("/api/auth/logout", {});
+    await apiClient.post(
+      `${BACKEND}/api/auth/logout`,
+      {},
+      { skipRefresh: true },
+    );
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("storage"));
+    clearAccessToken();
   },
 
   async forgotPassword(email: string): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/api/auth/forgot-password", { email });
+    return apiClient.post<AuthResponse>(`${BACKEND}/api/auth/forgot-password`, {
+      email,
+    });
   },
 
   async resetPassword(
@@ -44,7 +72,7 @@ export const authService = {
     email: string,
     newPassword: string,
   ): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/api/auth/reset-password", {
+    return apiClient.post<AuthResponse>(`${BACKEND}/api/auth/reset-password`, {
       token,
       email,
       newPassword,

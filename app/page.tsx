@@ -35,6 +35,7 @@ export default function HomePage() {
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ export default function HomePage() {
     setLoading(true);
     try {
       const data = await apiClient.get<{ result: SearchResult[] }>(
-        `/api/photos/search?query=${encodeURIComponent(query)}`,
+        `${BACKEND}/api/photos/search?query=${encodeURIComponent(query)}`,
         { skipRefresh: true },
       );
       setResults(data.result || []);
@@ -74,7 +75,7 @@ export default function HomePage() {
 
     try {
       const res = await apiClient.post<{ photo: { id: string } }>(
-        "/api/photos",
+        `${BACKEND}/api/photos`,
         {
           imageUrl: result.imageUrl,
           description: result.description,

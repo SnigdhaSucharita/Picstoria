@@ -22,6 +22,7 @@ export default function PhotoDetailPage() {
   const [loading, setLoading] = useState(true);
   const [customTag, setCustomTag] = useState("");
   const { user, loadingg } = useAuth();
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -40,7 +41,7 @@ export default function PhotoDetailPage() {
       const data = await apiClient.get<{
         photo: Photo;
         recommendations: SearchResult[];
-      }>(`/api/photos/${id}`);
+      }>(`${BACKEND}/api/photos/${id}`);
       setPhoto(data.photo);
       setRecommendations(data.recommendations || []);
     } catch (error: any) {
@@ -58,7 +59,7 @@ export default function PhotoDetailPage() {
     if (!photo || !tag.trim()) return;
 
     try {
-      await apiClient.post(`/api/photos/${photo.id}/tag`, {
+      await apiClient.post(`${BACKEND}/api/photos/${photo.id}/tag`, {
         tag: tag.trim(),
         type: isAiTag ? "ai" : "custom",
       });
@@ -90,7 +91,9 @@ export default function PhotoDetailPage() {
   const handleRemoveTag = async (tag: string, isAiTag: boolean) => {
     if (!photo) return;
 
-    await apiClient.delete(`/api/photos/${photo.id}/tag`, { tag: tag.trim() });
+    await apiClient.delete(`${BACKEND}/api/photos/${photo.id}/tag`, {
+      tag: tag.trim(),
+    });
 
     const updatedPhoto = {
       ...photo,
@@ -112,7 +115,7 @@ export default function PhotoDetailPage() {
   ) => {
     try {
       const res = await apiClient.post<{ photo: { id: string } }>(
-        "/api/photos",
+        `${BACKEND}/api/photos`,
         { imageUrl, description },
       );
 
