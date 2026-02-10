@@ -33,7 +33,7 @@ export default function HomePage() {
   const [results, setResults] = useState<SearchResultUI[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, authLoading } = useAuth();
   const router = useRouter();
   const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
@@ -60,6 +60,8 @@ export default function HomePage() {
   };
 
   const handleSavePhoto = async (result: SearchResultUI) => {
+    if (authLoading) return;
+
     if (!isAuthenticated) {
       router.push("/login?auth=required");
       return;
@@ -188,6 +190,7 @@ export default function HomePage() {
                       isSaved={!!result.isSaved}
                       isSaving={!!result.isSaving}
                       onSave={() => handleSavePhoto(result)}
+                      disabled={authLoading}
                     />
                   ))}
                 </div>
