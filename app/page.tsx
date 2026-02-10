@@ -190,7 +190,6 @@ export default function HomePage() {
                       isSaved={!!result.isSaved}
                       isSaving={!!result.isSaving}
                       onSave={() => handleSavePhoto(result)}
-                      disabled={authLoading}
                     />
                   ))}
                 </div>
