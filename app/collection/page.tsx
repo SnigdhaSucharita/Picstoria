@@ -17,7 +17,7 @@ export default function CollectionPage() {
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTag, setSearchTag] = useState("");
-  const { user, loadingg } = useAuth();
+  const { user, authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const BACKEND = process.env.NEXT_PUBLIC_API_URL;
@@ -26,7 +26,7 @@ export default function CollectionPage() {
     if (!loading && !user) {
       router.replace("/login");
     }
-  }, [loading, user]);
+  }, [authLoading, user]);
 
   useEffect(() => {
     loadPhotos();

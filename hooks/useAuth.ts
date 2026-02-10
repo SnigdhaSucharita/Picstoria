@@ -6,13 +6,13 @@ import { getAccessToken } from "@/lib/token-store";
 
 export function useAuth() {
   const [user, setUser] = useState<any>(null);
-  const [loadingg, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   async function fetchMe() {
     if (!getAccessToken()) {
       setUser(null);
-      setLoading(false);
+      setAuthLoading(false);
       return;
     }
 
@@ -22,7 +22,7 @@ export function useAuth() {
     } catch {
       setUser(null);
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   }
 
@@ -39,7 +39,7 @@ export function useAuth() {
 
   return {
     user,
-    loadingg,
+    authLoading,
     isAuthenticated: !!user,
   };
 }

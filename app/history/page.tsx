@@ -13,15 +13,16 @@ import { Search, Clock } from "lucide-react";
 export default function HistoryPage() {
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user, loadingg } = useAuth();
+  const { user, authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (!loading && !user) {
       router.replace("/login");
     }
-  }, [loading, user]);
+  }, [authLoading, user]);
 
   useEffect(() => {
     loadHistory();
@@ -30,7 +31,7 @@ export default function HistoryPage() {
   const loadHistory = async () => {
     try {
       const data = await apiClient.get<{ history: SearchHistoryItem[] }>(
-        "/api/search-history",
+        `${BACKEND}/api/search-history`,
       );
       setHistory(data.history || []);
     } catch (error: any) {

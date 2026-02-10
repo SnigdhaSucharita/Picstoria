@@ -21,14 +21,14 @@ export default function PhotoDetailPage() {
   const [recommendations, setRecommendations] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [customTag, setCustomTag] = useState("");
-  const { user, loadingg } = useAuth();
+  const { user, authLoading } = useAuth();
   const BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (!loading && !user) {
       router.replace("/login");
     }
-  }, [loading, user]);
+  }, [authLoading, user]);
 
   useEffect(() => {
     if (params?.id) {
