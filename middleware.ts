@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getAccessToken } from "./lib/token-store";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -32,7 +33,7 @@ export function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
-  const accessToken = request.cookies.get("access")?.value;
+  const accessToken = getAccessToken();
 
   if (!isPublicRoute && !accessToken) {
     const loginUrl = new URL("/login", request.url);
