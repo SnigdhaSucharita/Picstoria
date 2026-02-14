@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getAccessToken } from "./lib/token-store";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // NEVER touch Next internals
+  // Ignore internals
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
@@ -15,7 +14,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // API routes are backend-only
   if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
@@ -33,7 +31,7 @@ export function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
-  const accessToken = getAccessToken();
+  const accessToken = request.cookies.get("accessToken")?.value;
 
   if (!isPublicRoute && !accessToken) {
     const loginUrl = new URL("/login", request.url);
